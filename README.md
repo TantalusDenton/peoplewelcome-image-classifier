@@ -1,3 +1,3 @@
-# peoplewelcome-image-classifier
+# PeopleWelcome Image Classifier
 
 An image classifier module for PeoplwWelcome
