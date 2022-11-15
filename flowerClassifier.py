@@ -1,7 +1,7 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import PIL
 import tensorflow as tf
+import os
 
 from tensorflow import keras
 from tensorflow.keras import layers
@@ -9,8 +9,17 @@ from tensorflow.keras.models import Sequential
 
 import pathlib
 
-dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
-data_dir = tf.keras.utils.get_file('flower_photos', origin=dataset_url, untar=True)
+# Is this a Pigeon? This code can be used to create AI Yutaro Katori, a character from the meme.
+
+stock_images = []
+
+checkpoint_path = "pigeons_model/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+
+#dataset_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
+data_dir = "pigeons_ds"
 data_dir = pathlib.Path(data_dir)
 
 batch_size = 32
@@ -72,20 +81,33 @@ model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
+# If you have a trained model, loads the weights
+model.load_weights(checkpoint_path)
+
+#If you don't have a trained model, train it and save
+'''
 epochs = 15
+
+# Create a callback that saves the model's weights
+cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+                                                 save_weights_only=True,
+                                                 verbose=1)
+
 history = model.fit(
   train_ds,
   validation_data=val_ds,
-  epochs=epochs
+  epochs=epochs,
+  callbacks=[cp_callback]
 )
-
-
-sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
-sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
+'''
+#sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
+#sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
+pidgeon_path = "pigeons_validate/Neither/flower.jpg"
 
 img = tf.keras.utils.load_img(
-    sunflower_path, target_size=(img_height, img_width)
+    pidgeon_path, target_size=(img_height, img_width)
 )
+
 img_array = tf.keras.utils.img_to_array(img)
 img_array = tf.expand_dims(img_array, 0) # Create a batch
 
@@ -95,6 +117,6 @@ score = tf.nn.softmax(predictions[0])
 label = class_names[np.argmax(score)]
 
 print(
-    "This image most likely belongs to {} with a {:.2f} percent confidence."
+    "This image most likely shows a {} with a {:.2f} percent confidence."
     .format(class_names[np.argmax(score)], 100 * np.max(score))
 )

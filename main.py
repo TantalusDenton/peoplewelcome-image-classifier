@@ -27,7 +27,7 @@ db: List[User] = [
 
 images: List[Image] = [
     Image(
-        image = flowerClassifier.sunflower_url,
+        image = flowerClassifier.pidgeon_path,
         label = flowerClassifier.label
     )
 ]
