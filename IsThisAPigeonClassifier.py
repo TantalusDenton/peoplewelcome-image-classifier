@@ -11,7 +11,17 @@ import pathlib
 
 # Is this a Pigeon? This code can be used to create AI Yutaro Katori, a character from the meme.
 
-stock_images = []
+stock_images = [0 for i in range(10)] 
+stock_images[0] = "pigeons_validate/Pigeon/5.jpg"
+stock_images[1] = "pigeons_validate/Pigeon/Pigeon.jpeg"
+stock_images[2] = "pigeons_validate/Pigeon/pigeons.jpg"
+stock_images[3] = "pigeons_validate/Butterfly/1.jpg"
+stock_images[4] = "pigeons_validate/Butterfly/2.png"
+stock_images[5] = "pigeons_validate/Butterfly/3.jpg"
+stock_images[6] = "pigeons_validate/Butterfly/is-this-a-pigeon.jpeg"
+stock_images[7] = "pigeons_validate/Neither/bird.jpg"
+stock_images[8] = "pigeons_validate/Neither/flower.jpg"
+stock_images[9] = "pigeons_validate/Neither/cat.png"
 
 checkpoint_path = "pigeons_model/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
@@ -102,21 +112,40 @@ history = model.fit(
 '''
 #sunflower_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/592px-Red_sunflower.jpg"
 #sunflower_path = tf.keras.utils.get_file('Red_sunflower', origin=sunflower_url)
-pidgeon_path = "pigeons_validate/Neither/flower.jpg"
 
-img = tf.keras.utils.load_img(
-    pidgeon_path, target_size=(img_height, img_width)
-)
+def infer(img_num):
+  pidgeon_path = stock_images[img_num]
 
-img_array = tf.keras.utils.img_to_array(img)
-img_array = tf.expand_dims(img_array, 0) # Create a batch
+  img = tf.keras.utils.load_img(
+      pidgeon_path, target_size=(img_height, img_width)
+  )
 
-predictions = model.predict(img_array)
-score = tf.nn.softmax(predictions[0])
+  img_array = tf.keras.utils.img_to_array(img)
+  img_array = tf.expand_dims(img_array, 0) # Create a batch
 
-label = class_names[np.argmax(score)]
+  predictions = model.predict(img_array)
+  score = tf.nn.softmax(predictions[0])
 
-print(
-    "This image most likely shows a {} with a {:.2f} percent confidence."
-    .format(class_names[np.argmax(score)], 100 * np.max(score))
-)
+  label = class_names[np.argmax(score)]
+
+  prediction = [label, score]
+
+
+  print(
+      "This image most likely shows a {} with a {:.2f} percent confidence."
+      .format(class_names[np.argmax(score)], 100 * np.max(score))
+  )
+
+  return prediction
+
+predictions = [0 for i in range(10)] 
+labels = [0 for i in range(10)] 
+scores = [0 for i in range(10)] 
+
+for i in range(10):
+  predictions[i] = infer(i)
+  labels[i] = predictions[i][0]
+  # scores[i] = np.max(predictions[i][1])
+
+
+

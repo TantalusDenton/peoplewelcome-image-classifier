@@ -24,5 +24,6 @@ class UserUpdateRequest(BaseModel):
     first_name: Optional[str]
 
 class Image(BaseModel):
-    image: str
+    image_id: int
     label: str
+    #score: str

@@ -2,7 +2,7 @@ from typing import List
 from fastapi import FastAPI, HTTPException
 from models import User, Gender, Role, UserUpdateRequest, Image
 from uuid import UUID, uuid4
-import flowerClassifier
+import IsThisAPigeonClassifier
 
 #Start FastAPI
 app = FastAPI()
@@ -27,8 +27,55 @@ db: List[User] = [
 
 images: List[Image] = [
     Image(
-        image = flowerClassifier.pidgeon_path,
-        label = flowerClassifier.label
+        image_id = 0,
+        label = IsThisAPigeonClassifier.labels[0]
+        #score = IsThisAPigeonClassifier.scores[0]
+    ),
+    Image(
+        image_id = 1,
+        label = IsThisAPigeonClassifier.labels[1]
+        #score = IsThisAPigeonClassifier.scores[1]
+    )
+    ,
+    Image(
+        image_id = 2,
+        label = IsThisAPigeonClassifier.labels[2]
+        #score = IsThisAPigeonClassifier.scores[2]
+    ),
+    Image(
+        image_id = 3,
+        label = IsThisAPigeonClassifier.labels[3]
+        #score = IsThisAPigeonClassifier.scores[3]
+    ),
+    Image(
+        image_id = 4,
+        label = IsThisAPigeonClassifier.labels[4]
+        #score = IsThisAPigeonClassifier.scores[4]
+    ),
+    Image(
+        image_id = 5,
+        label = IsThisAPigeonClassifier.labels[5],
+        score = IsThisAPigeonClassifier.scores[5]
+    ),
+    Image(
+        image_id = 6,
+        label = IsThisAPigeonClassifier.labels[6]
+        #score = IsThisAPigeonClassifier.scores[6]
+    ),
+    Image(
+        image_id = 7,
+        label = IsThisAPigeonClassifier.labels[7]
+        #score = IsThisAPigeonClassifier.scores[7]
+    ),
+    Image(
+        image_id = 8,
+        label = IsThisAPigeonClassifier.labels[8]
+        #score = IsThisAPigeonClassifier.scores[8]
+    ),
+    Image(
+        image_id = 9,
+        label = IsThisAPigeonClassifier.labels[9]
+        #score = IsThisAPigeonClassifier.scores[9]
     )
 ]
 
@@ -45,11 +92,20 @@ async def fetch_user():
 async def fetch_label():
     return images
 
+@app.get("/api/v1/image/{image_id}")
+async def fetch_label():
+    return images
+
+@app.post("/api/v1/image/")
+async def infer_label(image: Image):
+    image.label = IsThisAPigeonClassifier.infer(image.image_id)
+    images.append(image)
+    return {"label": image.label}
+
 @app.post("/api/v1/users")
 async def register_user(user: User):
     db.append(user)
     return {"id": user.id}
-
 
 @app.delete("/api/v1/users/{user_id}")
 async def delete_user(user_id: UUID):
